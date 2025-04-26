@@ -1,5 +1,5 @@
 from django.contrib import admin
-from SchoolAssetManager.accounts.models import User
+from accounts.models import User  # ✅ Correct import
 
 class UserAdmin(admin.ModelAdmin):
     list_display = (
@@ -14,7 +14,3 @@ try:
     admin.site.register(User, UserAdmin)
 except admin.sites.AlreadyRegistered:
     pass
-
-
-
-
