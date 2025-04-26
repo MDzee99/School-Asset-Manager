@@ -1,5 +1,5 @@
 from django.contrib import admin
-from SchoolAssetManager.devices.models import Device
+from devices.models import Device  # ✅ Correct import
 
 class DeviceAdmin(admin.ModelAdmin):
     list_display = (
@@ -26,7 +26,3 @@ class DeviceAdmin(admin.ModelAdmin):
         return f"{obj.added_by.first_name} {obj.added_by.last_name}" if obj.added_by else "-"
 
 admin.site.register(Device, DeviceAdmin)
-
-
-
-
