@@ -1,6 +1,5 @@
 from django.db import models
-from SchoolAssetManager.schools.models import School
-from SchoolAssetManager.accounts.models import User  # تأكدي أنك مستوردة User من accounts.models
+from schools.models import School  # تأكدي أنك مستوردة User من accounts.models
 
 class Device(models.Model):
     DEVICE_TYPES = [
