@@ -60,7 +60,7 @@ MIDDLEWARE = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-ROOT_URLCONF = 'SchoolAssetManager.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
