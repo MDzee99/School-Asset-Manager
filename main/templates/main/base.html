@@ -1,0 +1,170 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+  <!-- Google Fonts: Outfit -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* الوضع العادي Light Mode */
+    .light-mode {
+      background-color: #e0f2fe;
+      color: #1d334a;
+    }
+    .light-mode .card,
+    .light-mode .table,
+    .light-mode .navbar {
+      background-color: #ffffff;
+      color: #1b2f45;
+    }
+    .light-mode .btn-outline-primary {
+      border-color: #223952;
+      color: #0d1b2a;
+    }
+    .light-mode .btn-outline-primary:hover {
+      background-color: #0d1b2a;
+      color: white;
+    }
+    .light-mode .btn-primary {
+      background-color: #0d1b2a;
+      border: none;
+      color: white;
+    }
+  
+    .dark-mode {
+      background-color: #121212;
+      color: #f1f1f1;
+    }
+    .dark-mode .card,
+    .dark-mode .table,
+    .dark-mode .navbar {
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+    }
+    .dark-mode .btn-outline-primary {
+      border-color: #f1f1f1;
+      color: #f1f1f1;
+    }
+    .dark-mode .btn-outline-primary:hover {
+      background-color: #f1f1f1;
+      color: #121212;
+    }
+    .dark-mode .btn-primary {
+      background-color: #f1f1f1;
+      border: none;
+      color: #121212;
+    }
+
+  
+  
+  </style>
+  
+</head>
+
+<body class="light-mode">
+
+    <nav id="navbar" class="navbar navbar-expand-lg shadow-sm fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="/">School Assets</a>
+      
+          <!-- زر القائمة يظهر عند تصغير الشاشة -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <!-- عناصر الناف بار اللي تختفي وتصير داخل القائمة -->
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+              {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    {{ request.user.first_name }} {{ request.user.last_name }}
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-item text-muted">Username: {{ request.user.username }}</li>
+                    <li class="dropdown-item text-muted">Email: {{ request.user.email }}</li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'accounts:change_password' %}">🔒 Change Password</a></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">🚪 Logout</a></li>
+                  </ul>
+                </li>
+                {% if request.user.role == 'admin' or request.user.is_superuser %}
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-outline-primary mx-2" href="{% url 'accounts:register_user_view' %}">➕ Register User</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link btn btn-outline-primary" href="{% url 'accounts:view_users' %}">👥 View Users</a>
+                  </li>
+                {% endif %}
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                </li>
+              {% endif %}
+              <li class="nav-item">
+                <button class="btn-toggle-dark btn btn-outline-secondary ms-2" onclick="toggleDarkMode()">
+                  <i class="bi bi-moon-stars-fill"></i>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+
+  <div style="padding-top: 80px;">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // لما الصفحة تفتح، شوف إذا فيه مود محفوظ
+    document.addEventListener('DOMContentLoaded', function() {
+      const currentMode = localStorage.getItem('mode');
+      const body = document.body;
+      const navbar = document.getElementById('navbar');
+  
+      if (currentMode === 'dark') {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        navbar.classList.add('navbar-dark');
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        navbar.classList.remove('navbar-dark');
+      }
+    });
+  
+    // الزر حق التبديل
+    function toggleDarkMode() {
+      const body = document.body;
+      const navbar = document.getElementById('navbar');
+  
+      if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        navbar.classList.add('navbar-dark');
+        localStorage.setItem('mode', 'dark');  // نحفظ الدارك
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        navbar.classList.remove('navbar-dark');
+        localStorage.setItem('mode', 'light');  // نحفظ اللايت
+      }
+    }
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,215 @@
+{% extends 'main/base.html' %}
+{% block title %}All Devices with Schools{% endblock %}
+{% load static %}
+{% block content %}
+
+{% if not request.user.is_superuser and request.user.role != 'admin' %}
+  <div class="container text-center mt-5">
+    <h1 class="text-danger">🚫 Access Denied</h1>
+    <p class="lead">You do not have permission to view this page.</p>
+  </div>
+{% else %}
+
+{% if messages and request.GET.q == None and request.GET.region == None %}
+  {% for message in messages %}
+    {% if 'Device' in message or 'School' in message %}
+      <div class="alert alert-success alert-dismissible fade show text-center w-75 mx-auto" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<style>
+
+  /* Adding background blur effect */
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin-top: 50px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    color: white;
+  }
+
+  /* Table and text color styles */
+  .table thead {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #0d1b2a;
+    font-weight: 700;
+  }
+
+  .table tbody td {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #0d1b2a;
+  }
+
+  .table th, .table td {
+    vertical-align: middle !important;
+    text-align: center;
+  }
+
+  .table th {
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+  }
+
+  .btn-primary {
+    background-color: #0d1b2a;
+    border-color: #0d1b2a;
+  }
+
+  .btn-primary:hover {
+    background-color: #132c46;
+  }
+
+  .btn-outline-primary {
+    border-color: #0d1b2a;
+    color: #0d1b2a;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d1b2a;
+    color: white;
+  }
+
+  /* Dark mode styles */
+  body.dark-mode .table thead {
+    background-color: rgba(18, 18, 18, 0.95);
+    color: #f1f1f1;
+  }
+
+  body.dark-mode .table tbody td {
+    background-color: rgba(18, 18, 18, 0.95);
+    color: #f1f1f1;
+  }
+
+  body.dark-mode .btn-outline-primary {
+    border-color: #f1f1f1;
+    color: #f1f1f1;
+  }
+
+  body.dark-mode .btn-outline-primary:hover {
+    background-color: #f1f1f1;
+    color: #121212;
+  }
+
+  body.dark-mode .btn-primary {
+    background-color: #f1f1f1;
+    border-color: #f1f1f1;
+    color: #121212;
+  }
+
+  body.dark-mode .home-box {
+    background-color: rgba(13, 27, 42, 0.7);
+  }
+
+  /* Header styling */
+  h2, h1, .text-primary {
+    color: white !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .table thead th, .table tbody td {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<div class="container-fluid mt-4">
+  <h2 class="text-center text-primary mb-4">📋 Devices + Schools + Technicians</h2>
+
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <input type="text" name="q" value="{{ search_query|default_if_none:'' }}" class="form-control" placeholder="🔍 Search by school, city, or technician">
+    </div>
+    <div class="col-md-4">
+      <select name="region" class="form-select">
+        <option value="">📍 Filter by region</option>
+        {% for value, label in regions %}
+          <option value="{{ value }}" {% if selected_region == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+   
+    <div class="col-md-2">
+      <a href="{% url 'devices:export_devices_excel' %}" class="btn btn btn-primary w-100">📥 Export Excel</a>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-sm">
+      <thead>
+        <tr>
+          <th>Technician</th>
+          <th>School</th>
+          <th>School ID</th>
+          <th>Region</th>
+          <th>City</th>
+          <th>Labs</th>
+          <th>Classes</th>
+          <th>PCs Needed</th>
+          <th>Laptops Needed</th>
+          <th>Projectors Needed</th>
+          <th>Device Type</th>
+          <th>Serial</th>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Status</th>
+          <th>OS</th>
+          <th>Note</th>
+          <th>Added At</th>
+          <th>Actions</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in devices %}
+        <tr>
+          <td>{{ d.added_by.first_name }} {{ d.added_by.last_name }}</td>
+          <td>{{ d.school.name }}</td>
+          <td>{{ d.school.school_id }}</td>
+          <td>{{ d.school.region }}</td>
+          <td>{{ d.school.city }}</td>
+          <td>{{ d.school.labs_count }}</td>
+          <td>{{ d.school.classes_count }}</td>
+          <td>{{ d.school.pc_needed }}</td>
+          <td>{{ d.school.laptop_needed }}</td>
+          <td>{{ d.school.projector_needed }}</td>
+          <td>{{ d.device_type }}</td>
+          <td>{{ d.serial_number }}</td>
+          <td>{{ d.brand }}</td>
+          <td>{{ d.model }}</td>
+          <td>{{ d.status }}</td>
+          <td>{{ d.operating_system }}</td>
+          <td>{{ d.notes|default:"—" }}</td>
+          <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
+          <td>
+            <a href="{% url 'devices:edit_device' d.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            <a href="{% url 'devices:delete_device' d.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this device?')"><i class="bi bi-trash3"></i></a>
+          </td>
+          <td>
+            {% if d.school.latitude and d.school.longitude %}
+              <a href="https://www.google.com/maps?q={{ d.school.latitude }},{{ d.school.longitude }}" target="_blank" style="text-decoration: none; color: #0d1b2a;">
+                Open in Maps
+              </a>
+            {% else %}
+              <span class="text-muted">Not specified</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endif %}
+{% endblock %}

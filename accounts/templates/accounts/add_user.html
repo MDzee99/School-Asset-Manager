@@ -1,0 +1,85 @@
+{% extends 'main/base.html' %}
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin-top: 50px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  label {
+    color: white;
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #0d1b2a !important;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+  }
+
+  .form-control::placeholder {
+    color: #6c757d;
+  }
+
+  .btn-success {
+    background-color: #0d1b2a;
+    border: none;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .btn-success:hover {
+    background-color: #132c46;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+  }
+
+  /* لما يصير دارك مود، اللابل والفورم مايتغيرون أبداً */
+  body.dark-mode label,
+  body.dark-mode h2 {
+    color: white !important;
+  }
+
+  body.dark-mode .form-control,
+  body.dark-mode .form-select {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #0d1b2a !important;
+  }
+
+</style>
+
+<div class="container">
+  <div class="home-box">
+    <h2><i class="bi bi-person-plus"></i> Add New Technician</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Add User</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

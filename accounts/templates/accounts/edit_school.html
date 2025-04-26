@@ -1,0 +1,94 @@
+{% extends 'main/base.html' %}
+{% block title %}Edit School{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin-top: 50px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  label {
+    color: #f0f0f0;
+    font-weight: 400;
+  }
+
+  .form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #0d1b2a;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .btn-success {
+    background-color: #0d1b2a;
+    border: none;
+    font-weight: 500;
+  }
+
+  .btn-success:hover {
+    background-color: #132c46;
+  }
+
+  h3 {
+    text-align: center;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 30px;
+  }
+</style>
+
+<div class="container">
+  <div class="home-box">
+    <h3><i class="bi bi-pencil-square"></i> Edit School</h3>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <label>School Name</label>
+          <input class="form-control" name="name" value="{{ school.name }}" required>
+
+          <label>School ID</label>
+          <input class="form-control" name="school_id" value="{{ school.school_id }}" required>
+
+          <label>Location</label>
+          <input class="form-control" name="location" value="{{ school.location }}">
+
+          <label>Labs Count</label>
+          <input class="form-control" type="number" name="labs_count" value="{{ school.labs_count }}">
+
+          <label>Classes Count</label>
+          <input class="form-control" type="number" name="classes_count" value="{{ school.classes_count }}">
+
+          <label>PCs Needed</label>
+          <input class="form-control" type="number" name="pc_needed" value="{{ school.pc_needed }}">
+        </div>
+
+        <div class="col-md-6">
+          <label>Laptops Needed</label>
+          <input class="form-control" type="number" name="laptop_needed" value="{{ school.laptop_needed }}">
+
+          <label>Projectors Needed</label>
+          <input class="form-control" type="number" name="projector_needed" value="{{ school.projector_needed }}">
+
+          <label>School Image (optional)</label>
+          <input type="file" name="image" class="form-control">
+        </div>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-success w-50"> Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+

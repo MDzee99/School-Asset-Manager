@@ -1,0 +1,102 @@
+{% extends 'main/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  .dashboard-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 85vh;
+  }
+
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    border-radius: 20px;
+    padding: 50px 30px;
+    width: 100%;
+    max-width: 1000px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+
+  .home-box h2 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+
+  .card-option {
+    border: 1px solid #ffffff;
+    border-radius: 14px;
+    padding: 30px;
+    transition: 0.3s;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-option:hover {
+    background-color: #f5f9fc;
+    transform: translateY(-5px);
+  }
+
+  .card-option a {
+    text-decoration: none;
+    color: #0d1b2a;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: block;
+    margin-top: 10px;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    color: #0d1b2a;
+  }
+
+  @media (max-width: 768px) {
+    .home-box h2 {
+      font-size: 2rem;
+    }
+    .card-option a {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<div class="dashboard-wrapper">
+  <div class="home-box">
+    <h2>Welcome, Admin</h2>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card-option">
+          <div class="card-icon"><i class="bi bi-person-plus-fill"></i></div>
+          <a href="{% url 'accounts:register_user_view' %}">Register New User</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-option">
+          <div class="card-icon"><i class="bi bi-people-fill"></i></div>
+          <a href="{% url 'accounts:view_users' %}">View All Users</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-option">
+          <div class="card-icon"><i class="bi bi-table"></i></div>
+          <a href="{% url 'devices:devices_with_schools' %}">Show Full Table</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

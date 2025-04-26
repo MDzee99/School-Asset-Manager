@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% block title %}Add Device{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">➕ Add Device to {{ school.name }}</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label>Device Type</label>
+      <select name="device_type" class="form-control" required>
+        <option value="PC">PC</option>
+        <option value="Laptop">Laptop</option>
+        <option value="Projector">Projector</option>
+        <option value="Switch">Switch</option>
+        <option value="Router">Router</option>
+        <option value="Access Point">Access Point</option>
+        <option value="Screen">Interactive Screen</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="mb-3"><label>Serial Number</label><input type="text" name="serial_number" class="form-control" required></div>
+    <div class="mb-3"><label>Brand</label><input type="text" name="brand" class="form-control" required></div>
+    <div class="mb-3"><label>Model</label><input type="text" name="model" class="form-control" required></div>
+    <div class="mb-3"><label>Status</label>
+      <select name="status" class="form-control" required>
+        <option value="Excellent">ممتاز</option>
+        <option value="Good">جيد</option>
+        <option value="Poor">ضعيف</option>
+      </select>
+    </div>
+    <div class="mb-3"><label>Operating System</label>
+      <select name="operating_system" class="form-control" required>
+        <option value="Windows 7">Windows 7</option>
+        <option value="Windows 10">Windows 10</option>
+        <option value="Windows 11">Windows 11</option>
+        <option value="Android">Android</option>
+        <option value="NA">N/A</option>
+      </select>
+    </div>
+    <div class="mb-3"><label>Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+    <button type="submit" class="btn btn-success mt-2">💾 Save</button>
+  </form>
+</div>
+{% endblock %}
+

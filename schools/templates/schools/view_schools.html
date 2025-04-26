@@ -1,0 +1,54 @@
+{% extends 'main/base.html' %}
+{% block title %}Login User{% endblock %}
+
+{% block content %}
+
+
+<form method="get">
+    <select name="region" class="form-control">
+      <option value="">-- اختر المنطقة --</option>
+      {% for code, name in regions %}
+        <option value="{{ code }}" {% if selected_region == code %}selected{% endif %}>{{ name }}</option>
+      {% endfor %}
+    </select>
+  
+    <input type="text" name="city" placeholder="ابحث بالمدينة" value="{{ city }}">
+    <input type="text" name="technician" placeholder="ابحث باسم الفني" value="{{ technician }}">
+    <button type="submit" class="btn btn-primary">فلتر</button>
+  </form>
+
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>اسم المدرسة</th>
+        <th>المنطقة</th>
+        <th>المدينة</th>
+        <th>اسم الفني</th>
+        <th>رقم المدرسة</th>
+        <th>المعامل</th>
+        <th>الفصول</th>
+        <th>PC</th>
+        <th>لاب توب</th>
+        <th>بروجكتر</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for school in schools %}
+        <tr>
+          <td>{{ school.name }}</td>
+          <td>{{ school.added_by.region }}</td>
+          <td>{{ school.added_by.city }}</td>
+          <td>{{ school.added_by.first_name }}</td>
+          <td>{{ school.school_id }}</td>
+          <td>{{ school.labs_count }}</td>
+          <td>{{ school.classes_count }}</td>
+          <td>{{ school.pc_needed }}</td>
+          <td>{{ school.laptop_needed }}</td>
+          <td>{{ school.projector_needed }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

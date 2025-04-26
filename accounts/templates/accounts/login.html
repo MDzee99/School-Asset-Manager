@@ -1,0 +1,98 @@
+{% extends 'main/base.html' %}
+{% block title %}Login User{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    .login-container {
+        max-width: 600px;
+        margin: 60px auto;
+        background-color: rgba(255, 255, 255, 0.142);
+        backdrop-filter: blur(8px);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+        color: white;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    h2.title {
+        color: white;
+        font-weight: 400;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    label {
+        color: white;
+        font-weight: 400;
+    }
+
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #0d1b2a;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .btn-blue {
+        background-color: #0d1b2a;
+        border: none;
+        color: rgba(255, 255, 255, 0.952);
+        width: 100%;
+        font-weight: 500;
+    }
+
+    .btn-blue:hover {
+        background-color: #132c46;
+    }
+
+    .alert {
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    /* Dark mode */
+    body.dark-mode .login-container {
+        background-color: rgba(13, 27, 42, 0.85);
+        color: white;
+    }
+
+    body.dark-mode .form-control {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #0d1b2a;
+    }
+
+    body.dark-mode .btn-blue {
+        background-color: #132c46;
+        border-color: #132c46;
+    }
+
+</style>
+
+<div class="login-container">
+    <h2 class="title">Login</h2>
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.tags == "error" or "invalid" in message.message %}
+            <div class="alert alert-danger text-center">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'accounts:login' %}">
+        {% csrf_token %}
+        <label>Username</label>
+        <input class="form-control mb-3" type="text" name="username" required>
+
+        <label>Password</label>
+        <input class="form-control mb-4" type="password" name="password" required>
+
+        <button type="submit" class="btn btn-blue">Login</button>
+    </form>
+</div>
+{% endblock %}
+

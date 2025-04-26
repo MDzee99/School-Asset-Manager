@@ -1,0 +1,262 @@
+{% extends 'main/base.html' %}
+{% block title %}Technician Dashboard{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    border-radius: 20px;
+    padding: 40px 30px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    color: white;
+  }
+
+  label {
+    color: #f0f0f0;
+    font-weight: 400;
+  }
+
+  .form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #0d1b2a;
+    border-radius: 8px;
+  }
+
+  .btn-primary {
+    background-color: #0d1b2a;
+    border: none;
+    font-weight: 500;
+  }
+  .btn-primary:hover {
+    background-color: #132c46;
+  }
+  .btn-outline-primary {
+    border-color: #0d1b2a;
+    color: #0d1b2a;
+  }
+  .btn-outline-primary:hover {
+    background-color: #0d1b2a;
+    color: white;
+  }
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+  .alert {
+    font-weight: 500;
+  }
+  .card-body p {
+    text-align: left;
+    color: #010a11;
+    margin-bottom: 10px;
+  }
+  .school-details-card {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    color: #0d1b2a;
+  }
+</style>
+
+<div class="home-box container mt-4">
+  {% if not school %}
+  <h2 class="text-white mb-4"><i class="bi bi-building"></i> Add New School</h2>
+
+  {% if msg %}
+    <div class="alert alert-info text-center">{{ msg }}</div>
+  {% endif %}
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="school">
+    <div class="row">
+      <div class="col-md-6">
+        <label>School Name*</label>
+        <input type="text" name="name" class="form-control mb-3" required value="{{ request.POST.name }}">
+
+        <label>School ID*</label>
+        <input type="text" name="school_id" class="form-control mb-3" required value="{{ request.POST.school_id }}">
+
+        <input type="hidden" name="region" value="{{ request.user.region }}">
+        <input type="hidden" name="city" value="{{ request.user.city }}">
+
+        <label>Location</label>
+        <input type="text" name="location" class="form-control mb-3" value="{{ request.POST.location }}">
+
+        <label>Latitude</label>
+        <input type="text" id="latitude" name="latitude" class="form-control mb-3" value="{{ request.POST.latitude }}">
+
+        <label>Longitude</label>
+        <input type="text" id="longitude" name="longitude" class="form-control mb-3" value="{{ request.POST.longitude }}">
+
+        <label>Select Location on Map</label>
+        <div id="map" style="height: 300px;" class="rounded border mb-3"></div>
+        <div class="text-center mb-3">
+          <button type="button" id="locate-btn" class="btn btn btn-primary w-40 btn-sm"> Use My Location</button>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label>Number of Labs</label>
+        <input type="number" name="labs_count" class="form-control mb-3" value="{{ request.POST.labs_count|default_if_none:"0" }}">
+
+        <label>Number of Classes</label>
+        <input type="number" name="classes_count" class="form-control mb-3" value="{{ request.POST.classes_count|default_if_none:"0" }}">
+
+        <label>PCs Needed</label>
+        <input type="number" name="pc_needed" class="form-control mb-3" value="{{ request.POST.pc_needed|default_if_none:"0" }}">
+
+        <label>Laptops Needed</label>
+        <input type="number" name="laptop_needed" class="form-control mb-3" value="{{ request.POST.laptop_needed|default_if_none:"0" }}">
+
+        <label>Projectors Needed</label>
+        <input type="number" name="projector_needed" class="form-control mb-3" value="{{ request.POST.projector_needed|default_if_none:"0" }}">
+
+        <label>School Image (optional)</label>
+        <input type="file" name="image" class="form-control mb-3">
+      </div>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-primary  w-40"><i class="bi bi-save"></i> Save School</button>
+    </div>
+  </form>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const map = L.map('map').setView([23.8859, 45.0792], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+
+      let marker;
+      function setMarker(lat, lng) {
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+        const latlng = L.latLng(lat, lng);
+        if (marker) {
+          marker.setLatLng(latlng);
+        } else {
+          marker = L.marker(latlng).addTo(map);
+        }
+        map.setView(latlng, 15);
+      }
+
+      map.on('click', function(e) {
+        setMarker(e.latlng.lat, e.latlng.lng);
+      });
+
+      document.getElementById('locate-btn').addEventListener('click', function () {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            setMarker(position.coords.latitude, position.coords.longitude);
+          }, function () {
+            alert('⚠️ Could not get your location. Please allow location access.');
+          });
+        } else {
+          alert('⚠️ Geolocation is not supported by this browser.');
+        }
+      });
+    });
+  </script>
+
+  {% else %}
+
+  <h2 class="text-white mb-4"><i class="bi bi-info-circle"></i> School Details</h2>
+  <div class="card mb-4 school-details-card">
+    <div class="card-body">
+      <p><strong>School Name:</strong> {{ school.name }}</p>
+      <p><strong>School ID:</strong> {{ school.school_id }}</p>
+      <p><strong>Region:</strong> {{ school.region }}</p>
+      <p><strong>City:</strong> {{ school.city }}</p>
+      <p><strong>Location:</strong> {{ school.location }}</p>
+      <p><strong>Labs Count:</strong> {{ school.labs_count }}</p>
+      <p><strong>Classes Count:</strong> {{ school.classes_count }}</p>
+      <p><strong>PC Needed:</strong> {{ school.pc_needed }}</p>
+      <p><strong>Laptop Needed:</strong> {{ school.laptop_needed }}</p>
+      <p><strong>Projector Needed:</strong> {{ school.projector_needed }}</p>
+      <p><strong>Added by:</strong> {{ school.added_by.first_name }} {{ school.added_by.last_name }}</p>
+      <p><strong>Added at:</strong> {{ school.created_at|date:"Y-m-d H:i" }}</p>
+      <p><strong>Location on Map:</strong>
+        {% if school.latitude and school.longitude %}
+          <a href="https://www.google.com/maps?q={{ school.latitude }},{{ school.longitude }}" target="_blank" class="btn btn-outline-primary btn-sm">Open in Maps</a>
+        {% else %}
+          <span class="text-muted">Not specified</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <h2 class="text-white  mb-4"><i class="bi bi-plus-square"></i> Add Device</h2>
+  {% if msg %}<div class="alert alert-info">{{ msg }}</div>{% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="device">
+    <div class="mb-3">
+      <label>Device Type</label>
+      <select class="form-control" name="device_type" required>
+        <option value="PC">PC</option>
+        <option value="Laptop">Laptop</option>
+        <option value="Projector">Projector</option>
+        <option value="Switch">Switch</option>
+        <option value="Router">Router</option>
+        <option value="Access Point">Access Point</option>
+        <option value="Screen">Interactive Screen</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Serial Number</label>
+      <input type="text" name="serial_number" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Brand</label>
+      <input type="text" name="brand" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Model</label>
+      <input type="text" name="model" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Status</label>
+      <select name="status" class="form-control" required>
+        <option value="Excellent">Excellent</option>
+        <option value="Good">Good</option>
+        <option value="Poor">Poor</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Operating System</label>
+      <select name="operating_system" class="form-control" required>
+        <option value="Windows 7">Windows 7</option>
+        <option value="Windows 10">Windows 10</option>
+        <option value="Windows 11">Windows 11</option>
+        <option value="Android">Android</option>
+        <option value="NA">N/A</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Notes</label>
+      <textarea name="notes" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="d-flex gap-3">
+      <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Device</button>
+    </div>
+  </form>
+  <form method="POST" action="{% url 'accounts:add_new_school' %}" class="mt-3">
+    {% csrf_token %}
+    <button class="btn btn-secondary "><i class="bi bi-building-add"></i> Add Another School</button>
+  </form>
+
+  {% endif %}
+</div>
+{% endblock %}

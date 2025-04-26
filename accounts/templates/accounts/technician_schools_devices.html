@@ -1,0 +1,180 @@
+{% extends 'main/base.html' %}
+{% block title %}My Schools & Devices{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    background-color: #f9f9f9;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    margin: 30px auto;
+    max-width: 1200px;
+    color: var(--text-color);
+  }
+
+  .card {
+    box-shadow: 0 0 10px rgba(148, 149, 158, 0.05);
+    border: 1px solid #d9e2ec;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    color: var(--text-color);
+  }
+
+  .card-header {
+    background-color: rgba(176, 180, 185, 0.4);
+    color: var(--text-color);
+    font-weight: 600;
+  }
+
+  .card-body p,
+  .card-body strong,
+  .card-body h5,
+  .table thead th,
+  .table tbody td,
+  label, h2 {
+    color: var(--text-color);
+  }
+
+  .table {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .table thead {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .table tbody td {
+    color: #0d1b2a;
+  }
+
+  .btn-outline-primary {
+    border-color: #0d1b2a;
+    color: #0d1b2a;
+    font-weight: 500;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #0d1b2a;
+    color: #fff;
+  }
+
+  .search-bar {
+    max-width: 500px;
+    margin: 0 auto 30px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  :root {
+    --text-color: #0d1b2a;
+  }
+
+  body.dark-mode {
+    --text-color: #ffffff;
+  }
+
+  .table-dark-mode {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .table-dark-mode td,
+  .table-dark-mode th {
+    color: #0d1b2a !important;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="home-box">
+    <h2 class="text-center mb-4" style="color: white;">My Added Schools and Their Devices</h2>
+
+    <form method="get" class="search-bar">
+      <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="🔍 Search by school name, ID, or city" value="{{ request.GET.q }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+      </div>
+    </form>
+
+    {% for school in schools %}
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ school.name }}</strong> | {{ school.school_id }} - {{ school.region }}, {{ school.city }}
+          </div>
+          <div>
+            <a href="{% url 'accounts:edit_school' school.id %}" class="btn btn-sm btn-outline-primary me-2">
+              <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{% url 'accounts:add_device_to_school' school.id %}" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-plus"></i> Add Device
+            </a>
+          </div>
+        </div>
+        <div class="card-body text-start">
+          <p><strong>Location:</strong> {{ school.location }}</p>
+          <p><strong>Labs:</strong> {{ school.labs_count }} | <strong>Classes:</strong> {{ school.classes_count }}</p>
+          <p><strong>PCs Needed:</strong> {{ school.pc_needed }} | <strong>Laptops:</strong> {{ school.laptop_needed }} | <strong>Projectors:</strong> {{ school.projector_needed }}</p>
+
+          {% if school.devices.all %}
+          <h5 class="mt-3">Devices:</h5>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered {% if request.COOKIES.mode == 'dark' %}table-dark-mode{% endif %}">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Serial</th>
+                  <th>Brand</th>
+                  <th>Model</th>
+                  <th>Status</th>
+                  <th>OS</th>
+                  <th>Notes</th>
+                  <th>Added At</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for device in school.devices.all %}
+                <tr>
+                  <td>{{ device.device_type }}</td>
+                  <td>{{ device.serial_number }}</td>
+                  <td>{{ device.brand }}</td>
+                  <td>{{ device.model }}</td>
+                  <td>{{ device.status }}</td>
+                  <td>{{ device.operating_system }}</td>
+                  <td>{{ device.notes|default:"—" }}</td>
+                  <td>{{ device.created_at|date:"Y-m-d H:i" }}</td>
+                  <td>
+                    {% if school.latitude and school.longitude %}
+                      <a href="https://www.google.com/maps?q={{ school.latitude }},{{ school.longitude }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-geo"></i> Maps
+                      </a>
+                    {% else %}
+                      <span class="text-muted">Not specified</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+            <p class="text-muted">No devices added yet.</p>
+          {% endif %}
+
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted text-center">You haven't added any schools yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

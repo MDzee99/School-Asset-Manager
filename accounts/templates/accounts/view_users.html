@@ -1,0 +1,92 @@
+{% extends 'main/base.html' %}
+{% block title %}View Users{% endblock %}
+{% block content %}
+<div class="container-fluid mt-5">
+    <a href="{% url 'accounts:view_users' %}" style="color: white; text-decoration: none;">
+        <h2 class="text-center mb-4">All Registered Users</h2>
+      </a>
+      
+  {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+        {% if "User updated successfully" in message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          ✅ {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-6">
+      <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="🔍 Search by name, username, email, phone, etc.">
+    </div>
+    <div class="col-md-4">
+      <select name="region" class="form-select">
+        <option value="">📍 Filter by Region</option>
+        {% for value, label in regions %}
+          <option value="{{ value }}" {% if selected_region == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped align-middle">
+      <thead class="table-light text-center">
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Employee ID</th>
+          <th>Phone</th>
+          <th>Region</th>
+          <th>City</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr class="text-center">
+          <td>{{ forloop.counter }}</td>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.employee_id }}</td>
+          <td>{{ user.phone }}</td>
+          <td>{{ user.get_region_display }}</td>
+          <td>{{ user.city }}</td>
+          <td>{{ user.get_role_display }}</td>
+          <td>
+            {% if can_edit_users %}
+              <a href="{% url 'accounts:update_user' user.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil"></i>
+              </a>
+              {% if user != request.user %}
+              <a href="{% url 'accounts:delete_user' user.id %}" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-x"></i>
+              </a>
+              {% endif %}
+            {% else %}
+              <span class="text-muted">No Access</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="10" class="text-center text-muted">No users found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+

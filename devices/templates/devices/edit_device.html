@@ -1,0 +1,163 @@
+لتعديل الكود وتحسين التصميم ليشمل التغبيش، مع الحفاظ على نفس الشكل والوظيفة كما في الصفحات الأخرى، يمكن تعديل الكود كما يلي:
+
+### التعديلات المطلوبة:
+1. **إضافة تأثير التغبيش (blur)** على الخلفية.
+2. **تأكد من أن الألوان لا تتأثر بالوضع الليلي**، مع الحفاظ على تناسق الألوان.
+3. **توحيد تصميم الأزرار والنصوص** لتتوافق مع تصميم باقي الصفحات.
+4. **الاحتفاظ بتفاعل التصميم مع مختلف أحجام الشاشات**.
+
+### الكود المعدل:
+
+```html
+{% extends 'main/base.html' %}
+{% block title %}Edit Device{% endblock %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    margin-top: 50px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  label {
+    color: white;
+    font-weight: 400;
+  }
+
+  .form-control {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: #0d1b2a;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+
+  .btn-success, .btn-secondary {
+    background-color: #0d1b2a;
+    border: none;
+    font-weight: 500;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .btn-success:hover, .btn-secondary:hover {
+    background-color: #132c46;
+  }
+
+  h3 {
+    text-align: center;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 30px;
+  }
+
+  /* Dark mode compatibility */
+  body.dark-mode .form-control,
+  body.dark-mode .form-select {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #0d1b2a !important;
+  }
+
+  body.dark-mode label,
+  body.dark-mode h3 {
+    color: white !important;
+  }
+
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .form-control {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="home-box">
+    <h3><i class="bi bi-pencil-square"></i> Edit Device for {{ device.school.name }}</h3>
+    <form method="POST">
+      {% csrf_token %}
+      
+      <div class="mb-2">
+        <label>Device Type</label>
+        <input class="form-control" name="device_type" value="{{ device.device_type }}">
+      </div>
+      <div class="mb-2">
+        <label>Serial Number</label>
+        <input class="form-control" name="serial_number" value="{{ device.serial_number }}">
+      </div>
+      <div class="mb-2">
+        <label>Brand</label>
+        <input class="form-control" name="brand" value="{{ device.brand }}">
+      </div>
+      <div class="mb-2">
+        <label>Model</label>
+        <input class="form-control" name="model" value="{{ device.model }}">
+      </div>
+      <div class="mb-2">
+        <label>Status</label>
+        <input class="form-control" name="status" value="{{ device.status }}">
+      </div>
+      <div class="mb-2">
+        <label>OS</label>
+        <input class="form-control" name="operating_system" value="{{ device.operating_system }}">
+      </div>
+      <div class="mb-2">
+        <label>Notes</label>
+        <textarea class="form-control" name="notes">{{ device.notes }}</textarea>
+      </div>
+
+      <hr>
+      <h5 class="mb-3">Edit School Info</h5>
+      <div class="mb-2">
+        <label>School Name</label>
+        <input class="form-control" name="school_name" value="{{ device.school.name }}">
+      </div>
+      <div class="mb-2">
+        <label>School Location</label>
+        <input class="form-control" name="school_location" value="{{ device.school.location }}">
+      </div>
+      <div class="mb-2">
+        <label>PCs Needed</label>
+        <input class="form-control" name="school_pc" value="{{ device.school.pc_needed }}">
+      </div>
+      <div class="mb-2">
+        <label>Laptops Needed</label>
+        <input class="form-control" name="school_laptop" value="{{ device.school.laptop_needed }}">
+      </div>
+      <div class="mb-2">
+        <label>Projectors Needed</label>
+        <input class="form-control" name="school_projector" value="{{ device.school.projector_needed }}">
+      </div>
+      <div class="mb-2">
+        <label>Labs</label>
+        <input class="form-control" name="school_labs" value="{{ device.school.labs_count }}">
+      </div>
+      <div class="mb-2">
+        <label>Classes</label>
+        <input class="form-control" name="school_classes" value="{{ device.school.classes_count }}">
+      </div>
+
+      <button class="btn btn-success mt-3 w-100">Save</button>
+      <button class="btn btn-secondary mt-3 w-100"><a href="{% url 'devices:devices_with_schools' %}" class="text-white text-decoration-none w-100">Back</a></button>
+      
+    </form>
+  </div>
+</div>
+{% endblock %}
+```
+
+### التعديلات:
+1. **إضافة التغبيش (blur)**: يتم تطبيق `backdrop-filter: blur(8px);` على `home-box` للحصول على تأثير التغبيش على الخلفية.
+2. **تحديد لون العنوان ليبقى أبيض** في جميع الحالات: باستخدام `color: white !important;`.
+3. **توحيد تنسيق الأزرار** لتتناسب مع تصميم الصفحات الأخرى، بما في ذلك التفاعل مع الوضع الليلي.
+4. **تحديث التنسيق ليتفاعل مع جميع الشاشات** باستخدام `@media queries`.
+
+### النتيجة:
+- **تأثير التغبيش** سيبقى فعالًا مع محتوى الصفحة.
+- **لون العنوان** سيظل أبيض في الوضعين العادي والليلي.
+- **توافق مع مختلف الشاشات**، مع تحسينات التصميم حسب الحجم.

@@ -1,0 +1,106 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  .home-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 85vh;
+  }
+
+  .home-box {
+    background-color: rgba(13, 27, 42, 0.3); /* كحلي شفاف */
+    border-radius: 20px;
+    padding: 80px 60px;
+    width: 100%;
+    max-width: 900px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .home-box h1 {
+    font-size: 3.2rem;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+  }
+
+  .home-box p {
+    font-size: 1.25rem;
+    color: #f0f0f0;
+    margin-top: 15px;
+  }
+
+  .home-buttons {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .home-buttons a {
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: #0d1b2a !important;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #dbe2ea;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .home-buttons a:hover {
+    background-color: #f1f4f8;
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .home-box {
+      padding: 40px 25px;
+    }
+
+    .home-box h1 {
+      font-size: 2.3rem;
+    }
+
+    .home-box p {
+      font-size: 1rem;
+    }
+
+    .home-buttons a {
+      font-size: 0.95rem;
+      padding: 12px 20px;
+    }
+  }
+</style>
+
+<div class="home-wrapper">
+  <div class="home-box">
+    <h1>Welcome to School Assets Manager</h1>
+    <p>Manage devices and school data with ease and security</p>
+
+    <div class="home-buttons">
+      {% if not request.user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+      {% else %}
+        {% if request.user.role == 'admin' or request.user.is_superuser %}
+          <a href="{% url 'accounts:dashboard_admin' %}">Admin Dashboard</a>
+        {% elif request.user.role == 'technician' %}
+          <a href="{% url 'accounts:dashboard_technician' %}">Add Schools & Devices</a>
+          <a href="{% url 'accounts:technician_schools_devices' %}">My Schools & Devices</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
