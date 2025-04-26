@@ -1,5 +1,6 @@
 from django.db import models
-from schools.models import School  # تأكدي أنك مستوردة User من accounts.models
+from schools.models import School  # ✅ correct import
+from accounts.models import User   # ✅ added this line
 
 class Device(models.Model):
     DEVICE_TYPES = [
@@ -28,7 +29,6 @@ class Device(models.Model):
     ]
 
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name="devices")
-
     device_type = models.CharField(max_length=30, choices=DEVICE_TYPES)
     serial_number = models.CharField(max_length=100, unique=True)
     brand = models.CharField(max_length=100)
@@ -36,13 +36,8 @@ class Device(models.Model):
     status = models.CharField(max_length=30, choices=STATUS_CHOICES)
     operating_system = models.CharField(max_length=30, choices=OS_CHOICES)
     notes = models.TextField(blank=True, null=True)
-   
-
-    # ✨ هنا الإضافات الجديدة:
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.device_type} - {self.serial_number}"
-
-
