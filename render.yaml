@@ -4,3 +4,6 @@ services:
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: gunicorn wsgi:application
+    # Add this after your build/install steps
+commands:
+  - python manage.py migrate
