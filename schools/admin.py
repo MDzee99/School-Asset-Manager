@@ -1,5 +1,5 @@
 from django.contrib import admin
-from SchoolAssetManager.schools.models import School
+from schools.models import School
 
 class SchoolAdmin(admin.ModelAdmin):
     list_display = (
@@ -18,6 +18,4 @@ try:
 except admin.sites.NotRegistered:
     pass
 
-
 admin.site.register(School, SchoolAdmin)
-
